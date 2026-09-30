@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\PlaceController as AdminPlaceController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,6 +23,26 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
-    Route::get('/admin-test', function () {
+
+Route::get('/admin-test', function () {
     return 'Bạn đang ở trang Admin';
 })->middleware(['auth', 'admin']);
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN - QUẢN LÝ ĐỊA ĐIỂM
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'admin'])
+    ->group(function () {
+
+        Route::resource(
+            'places',
+            AdminPlaceController::class
+        );
+
+    });
