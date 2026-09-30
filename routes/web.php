@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\Admin\PlaceController as AdminPlaceController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,3 +48,16 @@ Route::prefix('admin')
         );
 
     });
+
+
+
+
+Route::get(
+    '/places',
+    [PlaceController::class, 'index']
+)->name('places.index');
+
+Route::get(
+    '/places/{slug}',
+    [PlaceController::class, 'show']
+)->name('places.show');
