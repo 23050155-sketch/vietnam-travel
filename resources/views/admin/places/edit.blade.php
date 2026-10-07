@@ -1,279 +1,359 @@
-<h1>Sửa địa điểm</h1>
+<!DOCTYPE html>
+<html lang="vi">
 
+<head>
+    <meta charset="UTF-8">
 
-{{-- =========================
-     HIỂN THỊ LỖI TỔNG QUÁT
-========================= --}}
-@if($errors->any())
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <div style="
-        background:#fee2e2;
-        color:#991b1b;
-        padding:10px;
-        margin-bottom:15px;
-    ">
+    <title>Sửa địa điểm - TPDĐ Travel</title>
 
-        <strong>Dữ liệu chưa hợp lệ:</strong>
+    {{-- CSS dùng chung cho trang quản lý địa điểm --}}
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/admin-places.css') }}"
+    >
+</head>
 
-        <ul>
-            @foreach($errors->all() as $error)
+<body>
 
-                <li>
-                    {{ $error }}
-                </li>
+<div class="admin-wrapper">
 
-            @endforeach
-        </ul>
+    {{-- =========================
+         TIÊU ĐỀ TRANG
+    ========================== --}}
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Sửa địa điểm
+            </h1>
+
+            <p>
+                Cập nhật thông tin địa điểm du lịch
+            </p>
+
+        </div>
 
     </div>
 
-@endif
-
-
-{{-- =========================
-     FORM CẬP NHẬT ĐỊA ĐIỂM
-========================= --}}
-<form
-    action="{{ route('admin.places.update', $place) }}"
-    method="POST"
->
-
-    @csrf
-
-    @method('PUT')
-
 
     {{-- =========================
-         TỈNH / THÀNH PHỐ
+         HIỂN THỊ LỖI TỔNG QUÁT
     ========================== --}}
-    <label>
-        Tỉnh / Thành phố
-    </label>
+    @if($errors->any())
 
-    <br>
+        <div class="alert alert-danger">
 
-    <select name="province_id">
+            <strong>
+                Dữ liệu chưa hợp lệ:
+            </strong>
 
-        <option value="">
-            -- Chọn tỉnh / thành phố --
-        </option>
+            <ul style="margin:8px 0 0 20px;">
 
-        @foreach($provinces as $province)
+                @foreach($errors->all() as $error)
 
-            <option
-                value="{{ $province->id }}"
-                {{
-                    old(
-                        'province_id',
-                        $place->province_id
-                    ) == $province->id
-                        ? 'selected'
-                        : ''
-                }}
-            >
-                {{ $province->name }}
-            </option>
+                    <li>
+                        {{ $error }}
+                    </li>
 
-        @endforeach
+                @endforeach
 
-    </select>
+            </ul>
 
-
-    {{-- Hiển thị lỗi của province_id --}}
-    @error('province_id')
-        <div style="color:red;">
-            {{ $message }}
         </div>
-    @enderror
 
-
-    <br><br>
-
-
-    {{-- =========================
-         TÊN ĐỊA ĐIỂM
-    ========================== --}}
-    <label>
-        Tên địa điểm
-    </label>
-
-    <br>
-
-    <input
-        type="text"
-        name="name"
-        value="{{ old('name', $place->name) }}"
-        placeholder="Nhập tên địa điểm"
-    >
-
-
-    {{-- Hiển thị lỗi của name --}}
-    @error('name')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
+    @endif
 
 
     {{-- =========================
-         MÔ TẢ NGẮN
+         KHUNG FORM
     ========================== --}}
-    <label>
-        Mô tả ngắn
-    </label>
+    <div class="card">
 
-    <br>
-
-    <input
-        type="text"
-        name="short_description"
-        value="{{
-            old(
-                'short_description',
-                $place->short_description
-            )
-        }}"
-        placeholder="Nhập mô tả ngắn"
-    >
-
-
-    {{-- Hiển thị lỗi mô tả ngắn --}}
-    @error('short_description')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
-
-
-    {{-- =========================
-         MÔ TẢ CHI TIẾT
-    ========================== --}}
-    <label>
-        Mô tả chi tiết
-    </label>
-
-    <br>
-
-    <textarea
-        name="description"
-        placeholder="Nhập mô tả chi tiết"
-        rows="6"
-        cols="50"
-    >{{ old('description', $place->description) }}</textarea>
-
-
-    {{-- Hiển thị lỗi mô tả chi tiết --}}
-    @error('description')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
-
-
-    {{-- =========================
-         ĐỊA CHỈ
-    ========================== --}}
-    <label>
-        Địa chỉ
-    </label>
-
-    <br>
-
-    <input
-        type="text"
-        name="address"
-        value="{{ old('address', $place->address) }}"
-        placeholder="Nhập địa chỉ"
-    >
-
-
-    {{-- Hiển thị lỗi địa chỉ --}}
-    @error('address')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
-
-
-    {{-- =========================
-         TRẠNG THÁI
-    ========================== --}}
-    <label>
-        Trạng thái
-    </label>
-
-    <br>
-
-    <select name="status">
-
-        <option
-            value="active"
-            {{
-                old(
-                    'status',
-                    $place->status
-                ) === 'active'
-                    ? 'selected'
-                    : ''
-            }}
+        <form
+            action="{{ route('admin.places.update', $place) }}"
+            method="POST"
         >
-            Hiển thị
-        </option>
 
-        <option
-            value="hidden"
-            {{
-                old(
-                    'status',
-                    $place->status
-                ) === 'hidden'
-                    ? 'selected'
-                    : ''
-            }}
-        >
-            Ẩn
-        </option>
+            @csrf
 
-    </select>
+            {{-- Laravel dùng PUT cho chức năng cập nhật --}}
+            @method('PUT')
 
 
-    {{-- Hiển thị lỗi trạng thái --}}
-    @error('status')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
+            {{-- =========================
+                 TỈNH + TÊN ĐỊA ĐIỂM
+            ========================== --}}
+            <div class="form-row">
 
 
-    <br><br>
+                {{-- Tỉnh / Thành phố --}}
+                <div class="form-group">
+
+                    <label>
+                        Tỉnh / Thành phố *
+                    </label>
+
+                    <select
+                        name="province_id"
+                        class="form-control"
+                    >
+
+                        <option value="">
+                            -- Chọn tỉnh / thành phố --
+                        </option>
+
+                        @foreach($provinces as $province)
+
+                            <option
+                                value="{{ $province->id }}"
+                                {{
+                                    old(
+                                        'province_id',
+                                        $place->province_id
+                                    ) == $province->id
+                                        ? 'selected'
+                                        : ''
+                                }}
+                            >
+                                {{ $province->name }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
 
 
-    {{-- =========================
-         NÚT CẬP NHẬT
-    ========================== --}}
-    <button type="submit">
-        Cập nhật địa điểm
-    </button>
+                    {{-- Lỗi tỉnh --}}
+                    @error('province_id')
 
-</form>
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
 
 
-<br>
+                {{-- Tên địa điểm --}}
+                <div class="form-group">
+
+                    <label>
+                        Tên địa điểm *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        value="{{ old('name', $place->name) }}"
+                        placeholder="Ví dụ: Núi Bà Đen"
+                    >
 
 
-{{-- Quay lại danh sách --}}
-<a href="{{ route('admin.places.index') }}">
-    ← Quay lại danh sách
-</a>
+                    {{-- Lỗi tên địa điểm --}}
+                    @error('name')
+
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
+
+            </div>
+
+
+            {{-- =========================
+                 MÔ TẢ NGẮN
+            ========================== --}}
+            <div class="form-group">
+
+                <label>
+                    Mô tả ngắn
+                </label>
+
+                <input
+                    type="text"
+                    name="short_description"
+                    class="form-control"
+                    value="{{
+                        old(
+                            'short_description',
+                            $place->short_description
+                        )
+                    }}"
+                    placeholder="Nhập mô tả ngắn về địa điểm"
+                >
+
+
+                {{-- Lỗi mô tả ngắn --}}
+                @error('short_description')
+
+                    <div class="error-text">
+                        {{ $message }}
+                    </div>
+
+                @enderror
+
+            </div>
+
+
+            {{-- =========================
+                 MÔ TẢ CHI TIẾT
+            ========================== --}}
+            <div class="form-group">
+
+                <label>
+                    Mô tả chi tiết
+                </label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    placeholder="Nhập thông tin chi tiết về địa điểm..."
+                >{{ old('description', $place->description) }}</textarea>
+
+
+                {{-- Lỗi mô tả chi tiết --}}
+                @error('description')
+
+                    <div class="error-text">
+                        {{ $message }}
+                    </div>
+
+                @enderror
+
+            </div>
+
+
+            {{-- =========================
+                 ĐỊA CHỈ + TRẠNG THÁI
+            ========================== --}}
+            <div class="form-row">
+
+
+                {{-- Địa chỉ --}}
+                <div class="form-group">
+
+                    <label>
+                        Địa chỉ
+                    </label>
+
+                    <input
+                        type="text"
+                        name="address"
+                        class="form-control"
+                        value="{{ old('address', $place->address) }}"
+                        placeholder="Nhập địa chỉ"
+                    >
+
+
+                    {{-- Lỗi địa chỉ --}}
+                    @error('address')
+
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
+
+
+                {{-- Trạng thái --}}
+                <div class="form-group">
+
+                    <label>
+                        Trạng thái
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-control"
+                    >
+
+                        <option
+                            value="active"
+                            {{
+                                old(
+                                    'status',
+                                    $place->status
+                                ) === 'active'
+                                    ? 'selected'
+                                    : ''
+                            }}
+                        >
+                            Hiển thị
+                        </option>
+
+
+                        <option
+                            value="hidden"
+                            {{
+                                old(
+                                    'status',
+                                    $place->status
+                                ) === 'hidden'
+                                    ? 'selected'
+                                    : ''
+                            }}
+                        >
+                            Ẩn
+                        </option>
+
+                    </select>
+
+
+                    {{-- Lỗi trạng thái --}}
+                    @error('status')
+
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
+
+            </div>
+
+
+            {{-- =========================
+                 NÚT THAO TÁC
+            ========================== --}}
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Cập nhật địa điểm
+                </button>
+
+
+                <a
+                    href="{{ route('admin.places.index') }}"
+                    class="btn btn-secondary"
+                >
+                    ← Quay lại
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

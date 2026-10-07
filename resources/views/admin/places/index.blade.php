@@ -1,231 +1,289 @@
-<h1>Quản lý địa điểm</h1>
+<!DOCTYPE html>
+<html lang="vi">
 
-<a href="{{ route('admin.places.create') }}">
-    + Thêm địa điểm
-</a>
-
-<br><br>
-
-
-{{-- =========================
-     FORM TÌM KIẾM VÀ LỌC
-========================= --}}
-<form
-    action="{{ route('admin.places.index') }}"
-    method="GET"
->
-
-    {{-- Tìm kiếm theo tên --}}
-    <input
-        type="text"
-        name="keyword"
-        value="{{ request('keyword') }}"
-        placeholder="Nhập tên địa điểm..."
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
 
+    <title>Quản lý địa điểm - TPDĐ Travel</title>
 
-    {{-- Lọc theo tỉnh --}}
-    <select name="province_id">
+    {{-- CSS riêng của trang Admin --}}
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/admin-places.css') }}"
+    >
+</head>
 
-        <option value="">
-            -- Tất cả tỉnh / thành phố --
-        </option>
+<body>
 
-        @foreach($provinces as $province)
+<div class="admin-wrapper">
 
-            <option
-                value="{{ $province->id }}"
-                {{
-                    request('province_id') == $province->id
-                        ? 'selected'
-                        : ''
-                }}
+    {{-- =========================
+         TIÊU ĐỀ
+    ========================== --}}
+    <div class="page-header">
+
+        <div>
+            <h1>Quản lý địa điểm</h1>
+
+            <p>
+                Quản lý các địa điểm du lịch trong hệ thống
+            </p>
+        </div>
+
+        <a
+            href="{{ route('admin.places.create') }}"
+            class="btn btn-primary"
+        >
+            + Thêm địa điểm
+        </a>
+
+    </div>
+
+
+    {{-- =========================
+         TÌM KIẾM VÀ LỌC
+    ========================== --}}
+    <div class="card">
+
+        <form
+            action="{{ route('admin.places.index') }}"
+            method="GET"
+            class="filter-form"
+        >
+
+            {{-- Tìm kiếm theo tên --}}
+            <input
+                type="text"
+                name="keyword"
+                class="form-control"
+                value="{{ request('keyword') }}"
+                placeholder="🔍 Tìm tên địa điểm..."
             >
-                {{ $province->name }}
-            </option>
-
-        @endforeach
-
-    </select>
 
 
-    {{-- Lọc theo trạng thái --}}
-    <select name="status">
+            {{-- Lọc tỉnh --}}
+            <select
+                name="province_id"
+                class="form-control"
+            >
 
-        <option value="">
-            -- Tất cả trạng thái --
-        </option>
+                <option value="">
+                    Tất cả tỉnh / thành
+                </option>
 
-        <option
-            value="active"
-            {{
-                request('status') === 'active'
-                    ? 'selected'
-                    : ''
-            }}
-        >
-            Hiển thị
-        </option>
+                @foreach($provinces as $province)
 
-        <option
-            value="hidden"
-            {{
-                request('status') === 'hidden'
-                    ? 'selected'
-                    : ''
-            }}
-        >
-            Ẩn
-        </option>
-
-    </select>
-
-
-    <button type="submit">
-        Tìm kiếm
-    </button>
-
-
-    <a href="{{ route('admin.places.index') }}">
-        Xóa bộ lọc
-    </a>
-
-</form>
-
-
-<br>
-
-
-{{-- Thông báo thành công --}}
-@if(session('success'))
-
-    <p>
-        {{ session('success') }}
-    </p>
-
-@endif
-
-
-{{-- =========================
-     DANH SÁCH ĐỊA ĐIỂM
-========================= --}}
-
-<table border="1">
-
-    <tr>
-
-        <th>ID</th>
-
-        <th>
-            Tên địa điểm
-        </th>
-
-        <th>
-            Tỉnh / Thành phố
-        </th>
-
-        <th>
-            Trạng thái
-        </th>
-
-        <th>
-            Thao tác
-        </th>
-
-    </tr>
-
-
-    @forelse($places as $place)
-
-        <tr>
-
-            <td>
-                {{ $place->id }}
-            </td>
-
-            <td>
-                {{ $place->name }}
-            </td>
-
-            <td>
-                {{ $place->province->name }}
-            </td>
-
-            <td>
-
-                @if($place->status === 'active')
-
-                    Hiển thị
-
-                @else
-
-                    Ẩn
-
-                @endif
-
-            </td>
-
-            <td>
-
-                {{-- Sửa địa điểm --}}
-                <a
-                    href="{{
-                        route(
-                            'admin.places.edit',
-                            $place
-                        )
-                    }}"
-                >
-                    Sửa
-                </a>
-
-
-                {{-- Xóa địa điểm --}}
-                <form
-                    action="{{
-                        route(
-                            'admin.places.destroy',
-                            $place
-                        )
-                    }}"
-                    method="POST"
-                    style="display:inline;"
-                >
-
-                    @csrf
-
-                    @method('DELETE')
-
-                    <button
-                        type="submit"
-                        onclick="
-                            return confirm(
-                                'Bạn có chắc muốn xóa địa điểm này?'
-                            )
-                        "
+                    <option
+                        value="{{ $province->id }}"
+                        {{
+                            request('province_id') == $province->id
+                                ? 'selected'
+                                : ''
+                        }}
                     >
-                        Xóa
-                    </button>
+                        {{ $province->name }}
+                    </option>
 
-                </form>
+                @endforeach
 
-            </td>
+            </select>
 
-        </tr>
 
-    @empty
-
-        <tr>
-
-            <td
-                colspan="5"
-                style="text-align:center;"
+            {{-- Lọc trạng thái --}}
+            <select
+                name="status"
+                class="form-control"
             >
-                Không tìm thấy địa điểm phù hợp.
-            </td>
 
-        </tr>
+                <option value="">
+                    Tất cả trạng thái
+                </option>
 
-    @endforelse
+                <option
+                    value="active"
+                    {{
+                        request('status') === 'active'
+                            ? 'selected'
+                            : ''
+                    }}
+                >
+                    Hiển thị
+                </option>
 
-</table>
+                <option
+                    value="hidden"
+                    {{
+                        request('status') === 'hidden'
+                            ? 'selected'
+                            : ''
+                    }}
+                >
+                    Ẩn
+                </option>
+
+            </select>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Tìm kiếm
+            </button>
+
+
+            <a
+                href="{{ route('admin.places.index') }}"
+                class="btn btn-secondary"
+            >
+                Xóa lọc
+            </a>
+
+        </form>
+
+    </div>
+
+
+    {{-- Thông báo thành công --}}
+    @if(session('success'))
+
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+
+    @endif
+
+
+    {{-- =========================
+         DANH SÁCH ĐỊA ĐIỂM
+    ========================== --}}
+    <div class="card">
+
+        <div class="table-wrapper">
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên địa điểm</th>
+                        <th>Tỉnh / Thành phố</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                @forelse($places as $place)
+
+                    <tr>
+
+                        <td>
+                            #{{ $place->id }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ $place->name }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ $place->province->name }}
+                        </td>
+
+                        <td>
+
+                            @if($place->status === 'active')
+
+                                <span class="badge badge-active">
+                                    ● Hiển thị
+                                </span>
+
+                            @else
+
+                                <span class="badge badge-hidden">
+                                    ● Ẩn
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        <td>
+
+                            <div class="actions">
+
+                                {{-- Sửa --}}
+                                <a
+                                    href="{{ route('admin.places.edit', $place) }}"
+                                    class="btn btn-warning"
+                                >
+                                    Sửa
+                                </a>
+
+
+                                {{-- Xóa --}}
+                                <form
+                                    action="{{ route('admin.places.destroy', $place) }}"
+                                    method="POST"
+                                >
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                        onclick="
+                                            return confirm(
+                                                'Bạn có chắc muốn xóa địa điểm này?'
+                                            )
+                                        "
+                                    >
+                                        Xóa
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            style="text-align:center; padding:35px;"
+                        >
+                            Không tìm thấy địa điểm phù hợp.
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

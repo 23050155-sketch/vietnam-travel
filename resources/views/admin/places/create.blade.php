@@ -1,243 +1,284 @@
-<h1>Thêm địa điểm</h1>
+<!DOCTYPE html>
+<html lang="vi">
 
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-{{-- Hiển thị lỗi tổng quát nếu có --}}
-@if($errors->any())
+    <title>Thêm địa điểm - TPDĐ Travel</title>
 
-    <div style="
-        background:#fee2e2;
-        color:#991b1b;
-        padding:10px;
-        margin-bottom:15px;
-    ">
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/admin-places.css') }}"
+    >
+</head>
 
-        <strong>Dữ liệu chưa hợp lệ:</strong>
+<body>
 
-        <ul>
-            @foreach($errors->all() as $error)
+<div class="admin-wrapper">
 
-                <li>{{ $error }}</li>
+    <div class="page-header">
 
-            @endforeach
-        </ul>
+        <div>
+            <h1>Thêm địa điểm</h1>
+
+            <p>
+                Thêm một địa điểm du lịch mới vào hệ thống
+            </p>
+        </div>
 
     </div>
 
-@endif
 
+    {{-- Hiển thị lỗi --}}
+    @if($errors->any())
 
-<form
-    action="{{ route('admin.places.store') }}"
-    method="POST"
->
+        <div class="alert alert-danger">
 
-    @csrf
+            <strong>
+                Dữ liệu chưa hợp lệ:
+            </strong>
 
+            <ul style="margin:8px 0 0 20px;">
 
-    {{-- =========================
-         TỈNH / THÀNH PHỐ
-    ========================== --}}
+                @foreach($errors->all() as $error)
 
-    <label>
-        Tỉnh / Thành phố
-    </label>
+                    <li>
+                        {{ $error }}
+                    </li>
 
-    <br>
+                @endforeach
 
-    <select name="province_id">
+            </ul>
 
-        <option value="">
-            -- Chọn tỉnh / thành phố --
-        </option>
-
-        @foreach($provinces as $province)
-
-            <option
-                value="{{ $province->id }}"
-                {{
-                    old('province_id') == $province->id
-                        ? 'selected'
-                        : ''
-                }}
-            >
-                {{ $province->name }}
-            </option>
-
-        @endforeach
-
-    </select>
-
-    @error('province_id')
-        <div style="color:red;">
-            {{ $message }}
         </div>
-    @enderror
+
+    @endif
 
 
-    <br><br>
+    <div class="card">
 
-
-    {{-- =========================
-         TÊN ĐỊA ĐIỂM
-    ========================== --}}
-
-    <label>
-        Tên địa điểm
-    </label>
-
-    <br>
-
-    <input
-        type="text"
-        name="name"
-        value="{{ old('name') }}"
-        placeholder="Nhập tên địa điểm"
-    >
-
-    @error('name')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
-
-
-    {{-- =========================
-         MÔ TẢ NGẮN
-    ========================== --}}
-
-    <label>
-        Mô tả ngắn
-    </label>
-
-    <br>
-
-    <input
-        type="text"
-        name="short_description"
-        value="{{ old('short_description') }}"
-        placeholder="Nhập mô tả ngắn"
-    >
-
-    @error('short_description')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
-
-
-    {{-- =========================
-         MÔ TẢ CHI TIẾT
-    ========================== --}}
-
-    <label>
-        Mô tả chi tiết
-    </label>
-
-    <br>
-
-    <textarea
-        name="description"
-        placeholder="Nhập mô tả chi tiết"
-    >{{ old('description') }}</textarea>
-
-    @error('description')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
-
-
-    {{-- =========================
-         ĐỊA CHỈ
-    ========================== --}}
-
-    <label>
-        Địa chỉ
-    </label>
-
-    <br>
-
-    <input
-        type="text"
-        name="address"
-        value="{{ old('address') }}"
-        placeholder="Nhập địa chỉ"
-    >
-
-    @error('address')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
-
-
-    <br><br>
-
-
-    {{-- =========================
-         TRẠNG THÁI
-    ========================== --}}
-
-    <label>
-        Trạng thái
-    </label>
-
-    <br>
-
-    <select name="status">
-
-        <option
-            value="active"
-            {{
-                old('status', 'active') === 'active'
-                    ? 'selected'
-                    : ''
-            }}
+        <form
+            action="{{ route('admin.places.store') }}"
+            method="POST"
         >
-            Hiển thị
-        </option>
 
-        <option
-            value="hidden"
-            {{
-                old('status') === 'hidden'
-                    ? 'selected'
-                    : ''
-            }}
-        >
-            Ẩn
-        </option>
-
-    </select>
-
-    @error('status')
-        <div style="color:red;">
-            {{ $message }}
-        </div>
-    @enderror
+            @csrf
 
 
-    <br><br>
+            {{-- Tỉnh + tên địa điểm --}}
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>
+                        Tỉnh / Thành phố *
+                    </label>
+
+                    <select
+                        name="province_id"
+                        class="form-control"
+                    >
+
+                        <option value="">
+                            -- Chọn tỉnh / thành phố --
+                        </option>
+
+                        @foreach($provinces as $province)
+
+                            <option
+                                value="{{ $province->id }}"
+                                {{
+                                    old('province_id') == $province->id
+                                        ? 'selected'
+                                        : ''
+                                }}
+                            >
+                                {{ $province->name }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                    @error('province_id')
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                </div>
 
 
-    <button type="submit">
-        Thêm địa điểm
-    </button>
+                <div class="form-group">
 
-</form>
+                    <label>
+                        Tên địa điểm *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        value="{{ old('name') }}"
+                        placeholder="Ví dụ: Núi Bà Đen"
+                    >
+
+                    @error('name')
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                </div>
+
+            </div>
 
 
-<br>
+            {{-- Mô tả ngắn --}}
+            <div class="form-group">
 
-<a href="{{ route('admin.places.index') }}">
-    ← Quay lại danh sách
-</a>
+                <label>
+                    Mô tả ngắn
+                </label>
+
+                <input
+                    type="text"
+                    name="short_description"
+                    class="form-control"
+                    value="{{ old('short_description') }}"
+                    placeholder="Nhập mô tả ngắn về địa điểm"
+                >
+
+                @error('short_description')
+                    <div class="error-text">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+            </div>
+
+
+            {{-- Mô tả chi tiết --}}
+            <div class="form-group">
+
+                <label>
+                    Mô tả chi tiết
+                </label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    placeholder="Nhập thông tin chi tiết về địa điểm..."
+                >{{ old('description') }}</textarea>
+
+                @error('description')
+                    <div class="error-text">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+            </div>
+
+
+            {{-- Địa chỉ + trạng thái --}}
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>
+                        Địa chỉ
+                    </label>
+
+                    <input
+                        type="text"
+                        name="address"
+                        class="form-control"
+                        value="{{ old('address') }}"
+                        placeholder="Nhập địa chỉ"
+                    >
+
+                    @error('address')
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Trạng thái
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-control"
+                    >
+
+                        <option
+                            value="active"
+                            {{
+                                old('status', 'active') === 'active'
+                                    ? 'selected'
+                                    : ''
+                            }}
+                        >
+                            Hiển thị
+                        </option>
+
+                        <option
+                            value="hidden"
+                            {{
+                                old('status') === 'hidden'
+                                    ? 'selected'
+                                    : ''
+                            }}
+                        >
+                            Ẩn
+                        </option>
+
+                    </select>
+
+                    @error('status')
+                        <div class="error-text">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    + Thêm địa điểm
+                </button>
+
+                <a
+                    href="{{ route('admin.places.index') }}"
+                    class="btn btn-secondary"
+                >
+                    ← Quay lại
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
